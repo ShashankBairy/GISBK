@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class CampusDto {
 	
 	private int building_address_id;
+	private String building_name;
 	private Double latitude;
 	private Double longitude;
 

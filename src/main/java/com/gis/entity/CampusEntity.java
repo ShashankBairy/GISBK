@@ -1,5 +1,6 @@
 package com.gis.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,7 +24,8 @@ public class CampusEntity {
 	private int campus_id;
 	
 	private String campus_code;
-	private String campus_name;
+	@Column(name= "campus_name")
+	private String campusName;
 	private String campus_type;
 	private int status;
 	private String address_dno;

@@ -62,5 +62,20 @@ public class GISController {
 	public List<CampusDto> getBuildingAddByCity(@RequestParam String city_name){
 		return gisservice.getBuildingAddByCity(city_name);
 	}
+	
+	 @GetMapping
+	    public List<CampusDto> getBuildingsByLocation(
+	            @RequestParam(name = "country", required = false) String countryName,
+	            @RequestParam(name = "state", required = false) String stateName,
+	            @RequestParam(name = "district", required = false) String districtName,
+	            @RequestParam(name = "city", required = false) String cityName,
+	            @RequestParam(name = "campus", required = false) String campusName) {
+
+	        List<CampusDto> buildings = gisservice.findBuildingsByLocation(
+	                countryName, stateName,districtName, cityName, campusName);
+
+	        return buildings;
+	    }
+    
 
 }

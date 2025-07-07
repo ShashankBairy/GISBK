@@ -10,12 +10,14 @@ import org.springframework.stereotype.Service;
 import com.gis.dto.CampusDto;
 import com.gis.entity.BuildingAddressEntity;
 import com.gis.entity.BuildingEntity;
+import com.gis.entity.CampusEntity;
 import com.gis.entity.CityEntity;
 import com.gis.entity.CountryEntity;
 import com.gis.entity.DistrictEntity;
 import com.gis.entity.StateEntity;
 import com.gis.repository.BuildingAddressRepository;
 import com.gis.repository.BuildingRepository;
+import com.gis.repository.CampusRepository;
 import com.gis.repository.CityRepository;
 import com.gis.repository.CountryRepository;
 import com.gis.repository.DistrictRepository;
@@ -41,6 +43,8 @@ public class GISService {
 	
 	@Autowired
 	private CityRepository cityRepo;
+	
+	@Autowired CampusRepository campusRepo;
 	
 	
 	
@@ -111,9 +115,10 @@ public class GISService {
 		return buildingAdd;
 	}
 	
-	public CampusDto buildingAddToCampusDto(int building_address_id, Double latitude, Double longitude ){
+	public CampusDto buildingAddToCampusDto(int building_address_id,String building_name, Double latitude, Double longitude ){
 		CampusDto campus = new CampusDto();
 		campus.setBuilding_address_id(building_address_id);
+		campus.setBuilding_name(building_name);
 		campus.setLatitude(latitude);
 		campus.setLongitude(longitude);
 		return campus;
@@ -132,6 +137,7 @@ public class GISService {
 			buildingAddressRepo.findByBuilding(a).ifPresent(buildingAdd -> {
 	            CampusDto campus = buildingAddToCampusDto(
 	                buildingAdd.getBuilding_address_id(),
+	                a.getBuilding_name(),
 	                buildingAdd.getLatitude(),
 	                buildingAdd.getLongitude()
 	            );
@@ -156,6 +162,7 @@ public class GISService {
 			buildingAddressRepo.findByBuilding(building).ifPresent(buildingAdd ->{
 				CampusDto campus = buildingAddToCampusDto(
 						 buildingAdd.getBuilding_address_id(),
+						 building.getBuilding_name(),
 			             buildingAdd.getLatitude(),
 			             buildingAdd.getLongitude()
 			             );
@@ -164,6 +171,117 @@ public class GISService {
 		}
 		
 		return campuses;
+	}
+	
+	public List<CampusDto> findBuildingsByLocation(
+            String countryName,
+            String stateName,
+            String districtName,
+            String cityName,
+            String campusName) {
+		
+		List<CampusDto> campuses = new ArrayList<>();
+
+        // Check which parameter is provided and fetch buildings accordingly
+        if (countryName != null && !countryName.isEmpty()) {
+            CountryEntity country = countryRepo.findByCountryName(countryName);
+            if (country != null) {
+                List<BuildingEntity> buildings= buildingRepo.findByCountry(country);
+                for(BuildingEntity building: buildings) {
+                	buildingAddressRepo.findByBuilding(building).ifPresent(buildingAdd ->{
+        				CampusDto campus = buildingAddToCampusDto(
+        						 buildingAdd.getBuilding_address_id(),
+        						 building.getBuilding_name(),
+        			             buildingAdd.getLatitude(),
+        			             buildingAdd.getLongitude()
+        			             );
+        				campuses.add(campus);
+        			});
+              
+                }
+                return campuses;
+            }
+        } else if (stateName != null && !stateName.isEmpty()) {
+            StateEntity state = stateRepo.findByStateName(stateName);
+            if (state != null) {
+            	List<BuildingEntity> buildings= buildingRepo.findByState(state);
+            	for(BuildingEntity building: buildings) {
+                	buildingAddressRepo.findByBuilding(building).ifPresent(buildingAdd ->{
+        				CampusDto campus = buildingAddToCampusDto(
+        						 buildingAdd.getBuilding_address_id(),
+        						 building.getBuilding_name(),
+        			             buildingAdd.getLatitude(),
+        			             buildingAdd.getLongitude()
+        			             );
+        				campuses.add(campus);
+        			});
+              
+                }
+            	return campuses;
+            }
+        } else if (districtName != null && !districtName.isEmpty()) {
+            DistrictEntity district = districtRepo.findByDistrictName(districtName);
+            if (district != null) {
+            	List<BuildingEntity> buildings= buildingRepo.findByDistrict(district);
+            	for(BuildingEntity building: buildings) {
+                	buildingAddressRepo.findByBuilding(building).ifPresent(buildingAdd ->{
+        				CampusDto campus = buildingAddToCampusDto(
+        						 buildingAdd.getBuilding_address_id(),
+        						 building.getBuilding_name(),
+        			             buildingAdd.getLatitude(),
+        			             buildingAdd.getLongitude()
+        			             );
+        				campuses.add(campus);
+        			});
+              
+                }
+            	return campuses;
+            }
+        }else if (cityName != null && !cityName.isEmpty()) {
+            CityEntity city = cityRepo.findByCityName(cityName);
+            if (city != null) {
+            	List<BuildingEntity> buildings= buildingRepo.findByCity(city);
+            	for(BuildingEntity building: buildings) {
+                	buildingAddressRepo.findByBuilding(building).ifPresent(buildingAdd ->{
+        				CampusDto campus = buildingAddToCampusDto(
+        						 buildingAdd.getBuilding_address_id(),
+        						 building.getBuilding_name(),
+        			             buildingAdd.getLatitude(),
+        			             buildingAdd.getLongitude()
+        			             );
+        				campuses.add(campus);
+        			});
+              
+                }
+            	return campuses;
+            }
+        } else if (campusName != null && !campusName.isEmpty()) {
+            CampusEntity campus = campusRepo.findByCampusName(campusName);
+            if (campus != null) {
+            	List<BuildingEntity> buildings= buildingRepo.findByCampus(campus);
+            	for(BuildingEntity building: buildings) {
+                	buildingAddressRepo.findByBuilding(building).ifPresent(buildingAdd ->{
+        				CampusDto campusAdd = buildingAddToCampusDto(
+        						 buildingAdd.getBuilding_address_id(),
+        						 building.getBuilding_name(),
+        			             buildingAdd.getLatitude(),
+        			             buildingAdd.getLongitude()
+        			             );
+        				campuses.add(campusAdd);
+        			});
+              
+                }
+            	return campuses;
+            }
+        }
+
+        // Return empty list if no valid parameter is provided
+        return Collections.emptyList();
+    }
+	
+	public BuildingAddressEntity buildingIdToAdd(BuildingEntity building){
+		BuildingAddressEntity buildingAdd = buildingAddressRepo.findByBuilding(building).orElse(null);
+		return buildingAdd;
 	}
 
 }

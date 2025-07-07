@@ -8,4 +8,5 @@ import com.gis.entity.CampusEntity;
 @Repository
 public interface CampusRepository extends JpaRepository<CampusEntity, Integer> {
 
+	CampusEntity findByCampusName(String campus_name);
 }
