@@ -13,5 +13,6 @@ public class CampusDto {
 	private String building_name;
 	private Double latitude;
 	private Double longitude;
+	private String campus_name;
 
 }

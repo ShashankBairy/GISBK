@@ -115,12 +115,14 @@ public class GISService {
 		return buildingAdd;
 	}
 	
-	public CampusDto buildingAddToCampusDto(int building_address_id,String building_name, Double latitude, Double longitude ){
+	public CampusDto buildingAddToCampusDto(int building_address_id,String building_name, 
+			Double latitude, Double longitude,String campus_name ){
 		CampusDto campus = new CampusDto();
 		campus.setBuilding_address_id(building_address_id);
 		campus.setBuilding_name(building_name);
 		campus.setLatitude(latitude);
 		campus.setLongitude(longitude);
+		campus.setCampus_name(campus_name);
 		return campus;
 	}
 	
@@ -139,7 +141,8 @@ public class GISService {
 	                buildingAdd.getBuilding_address_id(),
 	                a.getBuilding_name(),
 	                buildingAdd.getLatitude(),
-	                buildingAdd.getLongitude()
+	                buildingAdd.getLongitude(),
+	                buildingAdd.getBuilding().getCampus().getCampusName()
 	            );
 	            campuses.add(campus);
 	        });
@@ -164,7 +167,8 @@ public class GISService {
 						 buildingAdd.getBuilding_address_id(),
 						 building.getBuilding_name(),
 			             buildingAdd.getLatitude(),
-			             buildingAdd.getLongitude()
+			             buildingAdd.getLongitude(),
+			             buildingAdd.getBuilding().getCampus().getCampusName()
 			             );
 				campuses.add(campus);
 			});
@@ -193,7 +197,9 @@ public class GISService {
         						 buildingAdd.getBuilding_address_id(),
         						 building.getBuilding_name(),
         			             buildingAdd.getLatitude(),
-        			             buildingAdd.getLongitude()
+        			             buildingAdd.getLongitude(),
+        			             buildingAdd.getBuilding().getCampus().getCampusName()
+
         			             );
         				campuses.add(campus);
         			});
@@ -211,7 +217,8 @@ public class GISService {
         						 buildingAdd.getBuilding_address_id(),
         						 building.getBuilding_name(),
         			             buildingAdd.getLatitude(),
-        			             buildingAdd.getLongitude()
+        			             buildingAdd.getLongitude(),
+        			             buildingAdd.getBuilding().getCampus().getCampusName()
         			             );
         				campuses.add(campus);
         			});
@@ -229,7 +236,9 @@ public class GISService {
         						 buildingAdd.getBuilding_address_id(),
         						 building.getBuilding_name(),
         			             buildingAdd.getLatitude(),
-        			             buildingAdd.getLongitude()
+        			             buildingAdd.getLongitude(),
+        			             buildingAdd.getBuilding().getCampus().getCampusName()
+
         			             );
         				campuses.add(campus);
         			});
@@ -247,7 +256,9 @@ public class GISService {
         						 buildingAdd.getBuilding_address_id(),
         						 building.getBuilding_name(),
         			             buildingAdd.getLatitude(),
-        			             buildingAdd.getLongitude()
+        			             buildingAdd.getLongitude(),
+        			             buildingAdd.getBuilding().getCampus().getCampusName()
+
         			             );
         				campuses.add(campus);
         			});
@@ -265,7 +276,9 @@ public class GISService {
         						 buildingAdd.getBuilding_address_id(),
         						 building.getBuilding_name(),
         			             buildingAdd.getLatitude(),
-        			             buildingAdd.getLongitude()
+        			             buildingAdd.getLongitude(),
+        			             buildingAdd.getBuilding().getCampus().getCampusName()
+
         			             );
         				campuses.add(campusAdd);
         			});
@@ -282,6 +295,28 @@ public class GISService {
 	public BuildingAddressEntity buildingIdToAdd(BuildingEntity building){
 		BuildingAddressEntity buildingAdd = buildingAddressRepo.findByBuilding(building).orElse(null);
 		return buildingAdd;
+	}
+	
+	public List<CampusDto> getAllBuildingAddress(){
+		List<BuildingEntity> buildings = buildingRepo.findAll();
+		
+		List<CampusDto> campuses = new ArrayList<>();
+		
+		for(BuildingEntity building: buildings) {
+        	buildingAddressRepo.findByBuilding(building).ifPresent(buildingAdd ->{
+				CampusDto campusAdd = buildingAddToCampusDto(
+						 buildingAdd.getBuilding_address_id(),
+						 building.getBuilding_name(),
+			             buildingAdd.getLatitude(),
+			             buildingAdd.getLongitude(),
+			             buildingAdd.getBuilding().getCampus().getCampusName()
+
+			             );
+				campuses.add(campusAdd);
+			});
+		}
+		
+		return campuses;
 	}
 
 }

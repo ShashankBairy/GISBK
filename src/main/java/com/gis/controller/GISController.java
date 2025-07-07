@@ -76,6 +76,11 @@ public class GISController {
 
 	        return buildings;
 	    }
+	 
+	 @GetMapping("/allbuildingids")
+	 public List<CampusDto> getAllBuildingsAdd(){
+		 return gisservice.getAllBuildingAddress();
+	 }
     
 
 }
