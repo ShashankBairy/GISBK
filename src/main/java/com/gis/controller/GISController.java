@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gis.dto.BuildingDto;
 import com.gis.dto.CampusDto;
 import com.gis.entity.BuildingAddressEntity;
 import com.gis.entity.BuildingEntity;
@@ -80,6 +81,11 @@ public class GISController {
 	 @GetMapping("/allbuildingids")
 	 public List<CampusDto> getAllBuildingsAdd(){
 		 return gisservice.getAllBuildingAddress();
+	 }
+	 
+	 @GetMapping("/getallbuildings")
+	 public List<BuildingDto> getAllBuildingsAddress(){
+		 return gisservice.getByBuidlingAddress();
 	 }
     
 

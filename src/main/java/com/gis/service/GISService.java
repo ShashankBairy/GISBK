@@ -7,16 +7,21 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.gis.dto.BuildingDto;
 import com.gis.dto.CampusDto;
+import com.gis.entity.Building;
 import com.gis.entity.BuildingAddressEntity;
 import com.gis.entity.BuildingEntity;
+import com.gis.entity.Campus;
 import com.gis.entity.CampusEntity;
 import com.gis.entity.CityEntity;
 import com.gis.entity.CountryEntity;
 import com.gis.entity.DistrictEntity;
 import com.gis.entity.StateEntity;
+import com.gis.repository.Building2Repository;
 import com.gis.repository.BuildingAddressRepository;
 import com.gis.repository.BuildingRepository;
+import com.gis.repository.Campus2Repository;
 import com.gis.repository.CampusRepository;
 import com.gis.repository.CityRepository;
 import com.gis.repository.CountryRepository;
@@ -44,7 +49,14 @@ public class GISService {
 	@Autowired
 	private CityRepository cityRepo;
 	
-	@Autowired CampusRepository campusRepo;
+	@Autowired 
+	private CampusRepository campusRepo;
+	
+	@Autowired
+	private Building2Repository buildingRepo2;
+	
+	@Autowired
+	private Campus2Repository campusRepo2;
 	
 	
 	
@@ -318,5 +330,34 @@ public class GISService {
 		
 		return campuses;
 	}
+	
+	public List<BuildingDto> getByBuidlingAddress(){
+		List<Campus> campuses = campusRepo2.findAll();
+		
+		List<BuildingDto> buildingIds = new ArrayList<>();
+		
+		for(Campus campus: campuses) {
+			List<Building> buildings =  buildingRepo2.findByCampus(campus);
+			for(Building building : buildings) {
+				BuildingDto buildingAdd = new BuildingDto();
+				buildingAdd.setBuidling_address(building.getBuilding_address());
+				buildingAdd.setBuilding_name(building.getBuildingName());
+				buildingAdd.setBuilding_purpose(building.getBuilding_purpose());
+				buildingAdd.setLatitude(building.getLatitude());
+				buildingAdd.setLongitude(building.getLongitude());
+				buildingAdd.setLand_mark(building.getLand_mark());
+				buildingAdd.setStreet(building.getStreet());
+				buildingAdd.setCampus_name(campus.getCampusName());
+				buildingAdd.setCampus_type(campus.getCampus_type());
+				buildingAdd.setCollege_type(campus.getCollege_type());
+				buildingIds.add(buildingAdd);
+			}
+		}
+		
+		return buildingIds;
+		
+	}
+	
+	
 
 }
